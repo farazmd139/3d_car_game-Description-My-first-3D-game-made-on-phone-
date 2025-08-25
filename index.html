@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Islamic Quiz — Kaun Banega Jannati Style</title>
+<style>
+  :root{
+    --bg1:#0d1b2a; --bg2:#1b263b; --card:#0f1724; --accent:#ffd166;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2)); color:#fff;
+    display:flex; flex-direction:column; align-items:center; padding:18px 12px 48px;
+  }
+  h1{margin:6px 0 14px; font-size:28px; text-shadow:0 6px 18px rgba(0,0,0,.6)}
+  /* Username modal / 3D box */
+  #usernameBox{
+    width:min(520px,96%); background:linear-gradient(135deg,#14213d88,#03102588);
+    border-radius:20px; padding:20px; margin-bottom:14px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    display:flex; align-items:center; gap:12px; justify-content:center; flex-direction:column;
+  }
+  #usernameBox input{width:80%; padding:10px 12px; border-radius:10px; border:none; font-size:16px; text-align:center}
+  #usernameBox button{padding:10px 18px; border-radius:10px; border:none; cursor:pointer; background:linear-gradient(90deg,#1dd1a1,#48dbfb); color:#002; font-weight:700}
+  /* Coins + user */
+  #topBar{width:min(980px,96%); display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
+  #coins{font-weight:800; color:#ffd700; text-shadow:0 2px 8px rgba(0,0,0,.6)}
+  #userLabel{opacity:.9}
+  /* Page layout */
+  .layout{width:min(980px,96%); display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr} }
+  /* Quiz Card */
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02)); border-radius:18px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.06)}
+  .quizMain{padding:12px; display:flex; flex-direction:column; align-items:center; gap:12px}
+  .timerBox{
+    width:140px; height:140px; border-radius:18px; display:grid; place-items:center; font-size:34px; font-weight:800;
+    background:linear-gradient(135deg,#ff6b6b,#feca57,#48dbfb,#1dd1a1); background-size:300% 300%;
+    box-shadow: 0 18px 40px rgba(0,0,0,.5), inset 0 -8px 30px rgba(0,0,0,.15);
+    animation: gradientMove 6s linear infinite;
+  }
+  @keyframes gradientMove {0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+  .questionText{ font-size:20px; text-align:center; color:var(--accent); font-weight:700; text-shadow:0 4px 18px rgba(0,0,0,.6); padding:6px 8px}
+  .options{width:100%; display:grid; gap:12px; grid-template-columns: 1fr 1fr}
+  @media (max-width:520px){ .options{grid-template-columns:1fr} }
+  .opt{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border-radius:12px; padding:14px; cursor:pointer; text-align:left; font-weight:800; font-size:16px;
+    box-shadow: 0 14px 30px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.06);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .opt:hover{ transform: translateY(-6px); box-shadow:0 26px 60px rgba(0,0,0,.6) }
+  .opt.correct{ border-color: rgba(0,220,120,.6); box-shadow:0 0 20px rgba(0,220,120,.18) }
+  .opt.wrong{ border-color: rgba(255,80,80,.7); box-shadow:0 0 20px rgba(255,80,80,.12) }
+  /* right panel: categories + helpers */
+  .side{display:flex; flex-direction:column; gap:12px}
+  .categories{display:flex; flex-wrap:wrap; gap:8px}
+  .catBtn{padding:10px 12px; border-radius:10px; background:linear-gradient(90deg,#254, #136); color:#fff; border:none; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.45)}
+  .catBtn:hover{transform:translateY(-6px)}
+  .helpRow{display:flex; gap:8px; flex-wrap:wrap}
+  .helpBtn{padding:10px 12px; border-radius:10px; background:linear-gradient(90deg,#ff9f43,#ee5253); border:none; cursor:pointer; font-weight:800; box-shadow:0 10px 24px rgba(0,0,0,.45)}
+  .helpBtn.disabled{opacity:.45; cursor:not-allowed; transform:none}
+  .small{font-size:13px; color:#ddd}
+  .startRow{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+  /* footer */
+  .centerSmall{font-size:13px; color:#cfd8ff66; text-align:center; margin-top:8px}
+</style>
+</head>
+<body>
+
+<h1>🕌 Kaun Banega Jannati — Islamic Quiz</h1>
+
+<!-- Username / First-time 3D box -->
+<div id="usernameBox" class="card" style="display:none">
+  <div style="font-weight:900; font-size:18px">Apna Naam Darj Karen</div>
+  <input id="usernameInput" placeholder="Shehzada Faraz 😊" />
+  <div style="display:flex; gap:10px">
+    <button onclick="saveUsername()">Save & Get 200 Coins</button>
+  </div>
+  <div class="small" style="margin-top:8px">Aapka naam local device me save hoga.</div>
+</div>
+
+<!-- Top bar -->
+<div id="topBar">
+  <div id="userLabel" class="small"></div>
+  <div id="coins" >Coins: 0</div>
+</div>
+
+<!-- Layout -->
+<div class="layout">
+  <!-- LEFT: Quiz Card -->
+  <div class="card">
+    <div class="quizMain">
+      <div id="quizHeader" style="width:100%; display:flex; justify-content:space-between; align-items:center">
+        <div class="small">Round: <span id="roundDisplay">0</span>/<span id="totalQ">0</span></div>
+        <div class="small">Score: <span id="scoreDisplay">0</span></div>
+      </div>
+
+      <div id="timerBox" class="timerBox">30</div>
+
+      <div id="questionCard" style="width:100%">
+        <div class="questionText" id="questionText">Start karne ke liye Start Quiz dabayein</div>
+        <div class="options" id="options"></div>
+      </div>
+
+      <div class="startRow" style="margin-top:6px">
+        <button id="startBtn" onclick="startQuiz()">Start Quiz</button>
+        <button id="restartBtn" onclick="restartQuiz()" style="display:none">Restart Quiz</button>
+      </div>
+
+      <div id="resultLine" class="centerSmall"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Category + helpers -->
+  <div class="side">
+    <div class="card" style="padding:12px">
+      <div style="font-weight:900; margin-bottom:8px">Categories (API)</div>
+      <div class="categories" id="categories">
+        <button class="catBtn" onclick="loadCategory('Namaz')">Namaz</button>
+        <button class="catBtn" onclick="loadCategory('Quran')">Quran</button>
+        <button class="catBtn" onclick="loadCategory('Hadees')">Hadees</button>
+        <button class="catBtn" onclick="loadCategory('Sahaba')">Sahaba</button>
+        <button class="catBtn" onclick="loadCategory('Nabi')">Nabi</button>
+        <button class="catBtn" onclick="loadCategory('Islam')">Islam</button>
+        <button class="catBtn" onclick="loadCategory('Tafseer')">Tafseer</button>
+        <button class="catBtn" onclick="loadCategory('Seerah')">Seerah</button>
+      </div>
+      <div class="small" style="margin-top:8px">API fetch cost: <b>50 coins</b> per category (refund on failure)</div>
+      <div id="catStatus" class="small" style="margin-top:8px; color:#ffd"></div>
+    </div>
+
+    <div class="card" style="padding:12px">
+      <div style="font-weight:900; margin-bottom:8px">Helps (one use per quiz)</div>
+      <div class="helpRow">
+        <button id="btn5050" class="helpBtn" onclick="use5050()">50-50<br><span class="small">5 coins</span></button>
+        <button id="btnHint" class="helpBtn" onclick="useHint()">Hint<br><span class="small">10 coins</span></button>
+        <button id="btnAsk" class="helpBtn" onclick="useAsk()">Ask<br><span class="small">20 coins</span></button>
+        <button id="btnSkip" class="helpBtn" onclick="useSkip()">Skip<br><span class="small">30 coins</span></button>
+      </div>
+      <div style="height:10px"></div>
+      <div style="font-weight:900; margin-bottom:8px">Spend Coins</div>
+      <div class="helpRow">
+        <button class="helpBtn" onclick="activateDouble()">Double Points<br><span class="small">20 coins</span></button>
+        <button class="helpBtn" onclick="activateLife()">Extra Life<br><span class="small">30 coins</span></button>
+      </div>
+      <div class="small" style="margin-top:8px">Double: next correct gives + points. Extra life saves one wrong answer.</div>
+    </div>
+
+    <div class="card" style="padding:12px">
+      <div style="font-weight:900">Loaded Questions (preview)</div>
+      <div id="preview" class="small" style="margin-top:8px; min-height:80px">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="centerSmall">Built for testing — for production move API key to a secure server.</div>
+
+<!-- Sounds (public small files) -->
+<audio id="tickSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
+<audio id="finalTick" src="https://www.soundjay.com/button/sounds/beep-07.mp3" preload="auto"></audio>
+<audio id="correctSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="https://www.soundjay.com/button/sounds/button-10.mp3" preload="auto"></audio>
+
+<script>
+/* ===========================
+   Configuration & storage
+   =========================== */
+const API_KEY = "AIzaSyDB4TUj3zsU90jCfI8L0yivvWIYipUtq3c"; // you supplied
+const API_MODEL_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+
+let defaultBank = [
+  {q:"Islam ka pehla Kalma kya hai?", opts:["La ilaha illallah","Bismillah","Allahu Akbar","SubhanAllah"], a:0},
+  {q:"Roza kis mahine me farz hai?", opts:["Rajab","Ramzan","Shaban","Muharram"], a:1},
+  {q:"Quran me kitne sipare hain?", opts:["20","30","40","10"], a:1},
+  {q:"Zakat ka farz kitni rakat hai?", opts:["2.5%","10%","5%","1%"], a:0},
+  {q:"Haj kis shehar me ada hota hai?", opts:["Medina","Mecca","Jerusalem","Taif"], a:1},
+  {q:"Namaz me kitne rakat Farz hain?", opts:["5","6","4","3"], a:0},
+  {q:"Surah Fatiha me kitne ayat hain?", opts:["6","7","5","8"], a:1},
+  {q:"Eid ul-Fitr ka taalluq kaunse ibadat se hai?", opts:["Roza","Zakat","Hajj","Jihad"], a:0},
+  {q:"Jumma ki namaz kab ada hoti hai?", opts:["Subah","Dopehar","Sham","Raat"], a:1},
+  {q:"Quran me sabse lambi surah kaun si hai?", opts:["Al-Fatiha","Al-Baqarah","An-Nas","Al-Ikhlas"], a:1}
+];
+
+// State
+let quizBank = [];        // current quiz questions (array of {q,opts,a})
+let current = 0;
+let score = 0;
+let timer = null;
+let timeLimit = 30;
+let timeLeft = timeLimit;
+let coins = parseInt(localStorage.getItem('coins') || '0', 10);
+let username = localStorage.getItem('username') || "";
+let helpUsed = {btn5050:false, btnHint:false, btnAsk:false, btnSkip:false};
+let helpCosts = {btn5050:5, btnHint:10, btnAsk:20, btnSkip:30};
+let doubleActive = false;      // double points currently active (applies to next correct)
+let extraLifeActive = false;   // extra life purchased (true until used)
+let extraLifeConsumed = false; // whether extra life already used
+let totalQuestionsToPlay = 10;
+
+/* DOM refs */
+const coinsEl = document.getElementById('coins');
+const userLabel = document.getElementById('userLabel');
+const usernameBox = document.getElementById('usernameBox');
+const timerBox = document.getElementById('timerBox');
+const questionText = document.getElementById('questionText');
+const optionsWrap = document.getElementById('options');
+const startBtn = document.getElementById('startBtn');
+const restartBtn = document.getElementById('restartBtn');
+const resultLine = document.getElementById('resultLine');
+const preview = document.getElementById('preview');
+const catStatus = document.getElementById('catStatus');
+const roundDisplay = document.getElementById('roundDisplay');
+const totalQ = document.getElementById('totalQ');
+const scoreDisplay = document.getElementById('scoreDisplay');
+
+const tickSound = document.getElementById('tickSound');
+const finalTick = document.getElementById('finalTick');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+
+/* Initial UI */
+updateCoinsUI();
+if(!username){
+  usernameBox.style.display = 'flex';
+} else {
+  userLabel.textContent = username;
+}
+
+/* Save username */
+function saveUsername(){
+  const v = document.getElementById('usernameInput').value.trim();
+  if(!v){ alert('Naam daalo bhai!'); return; }
+  username = v;
+  localStorage.setItem('username', username);
+  // first time bonus if coins not set (only give once)
+  if(!localStorage.getItem('bonusGiven')){
+    coins += 200;
+    localStorage.setItem('bonusGiven','1');
+    localStorage.setItem('coins', coins);
+  }
+  usernameBox.style.display='none';
+  userLabel.textContent = username;
+  updateCoinsUI();
+}
+
+/* Update coins UI */
+function updateCoinsUI(){
+  coinsEl.textContent = `Coins: ${coins}` + (username? ` | ${username}`:'');
+}
+
+/* Shuffle helper */
+function shuffleArray(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* START QUIZ using either default bank or current quizBank if loaded */
+function startQuiz(){
+  // ensure audio allowed: user clicked
+  startBtn.style.display='none';
+  restartBtn.style.display='none';
+  resultLine.textContent = '';
+  // if no custom bank loaded, use shuffled default questions
+  if(!quizBank || quizBank.length===0){
+    quizBank = defaultBank.map(x=>({q:x.q, opts: [...x.opts], a:x.a}));
+    shuffleArray(quizBank);
+    // ensure at least totalQuestionsToPlay items
+    if(quizBank.length < totalQuestionsToPlay){
+      // duplicate if needed
+      while(quizBank.length < totalQuestionsToPlay){
+        quizBank.push(...quizBank.slice(0, Math.min(quizBank.length, totalQuestionsToPlay-quizBank.length)));
+      }
+    }
+  }
+  // trim to totalQuestionsToPlay and shuffle
+  quizBank = shuffleArray(quizBank).slice(0, totalQuestionsToPlay);
+  current = 0; score = 0;
+  helpUsed = {btn5050:false, btnHint:false, btnAsk:false, btnSkip:false};
+  document.querySelectorAll('.helpBtn, .helpBtn.helpBtn').forEach(b=>{ /* visual buttons remain; individual disabling handled below */ });
+  // enable help buttons visually
+  document.getElementById('btn5050').classList.remove('disabled'); document.getElementById('btn5050').disabled = false;
+  document.getElementById('btnHint').classList.remove('disabled'); document.getElementById('btnHint').disabled = false;
+  document.getElementById('btnAsk').classList.remove('disabled'); document.getElementById('btnAsk').disabled = false;
+  document.getElementById('btnSkip').classList.remove('disabled'); document.getElementById('btnSkip').disabled = false;
+
+  doubleActive = false; extraLifeActive = false; extraLifeConsumed=false;
+  totalQ.textContent = totalQuestionsToPlay;
+  roundDisplay.textContent = 0;
+  scoreDisplay.textContent = 0;
+  loadQuestion();
+}
+
+/* Restart */
+function restartQuiz(){
+  quizBank = []; // clear custom bank so default used
+  startBtn.style.display='inline-block';
+  restartBtn.style.display='none';
+  questionText.textContent = 'Start karne ke liye Start Quiz dabayein';
+  optionsWrap.innerHTML = '';
+  timerBox.textContent = '';
+  preview.textContent = '—';
+}
+
+/* Load single question */
+function loadQuestion(){
+  if(current >= quizBank.length){
+    endQuiz();
+    return;
+  }
+  // prepare
+  const qobj = quizBank[current];
+  // increment round shown (1-based)
+  roundDisplay.textContent = current+1;
+  totalQ.textContent = quizBank.length;
+  scoreDisplay.textContent = score;
+  // shuffle options and keep index of correct
+  const opts = qobj.opts.map((t,i)=>({t,i}));
+  shuffleArray(opts);
+  qobj._shuffled = opts; // store for answer check
+  // render
+  questionText.textContent = `Q${current+1}. ${qobj.q}`;
+  optionsWrap.innerHTML = '';
+  opts.forEach(item=>{
+    const btn = document.createElement('div');
+    btn.className = 'opt';
+    btn.textContent = item.t;
+    btn.onclick = ()=> chooseAnswer(item.i, btn); // original index
+    optionsWrap.appendChild(btn);
+  });
+  preview.textContent = qobj.q;
+  startTimer();
+}
+
+/* Timer with tick sounds; last10 use finalTick */
+function startTimer(){
+  clearInterval(timer);
+  timeLeft = timeLimit;
+  timerBox.textContent = timeLeft;
+  timer = setInterval(()=>{
+    timeLeft--;
+    timerBox.textContent = timeLeft;
+    // play sound: last 10 use finalTick, else tickSound
+    try{
+      if(timeLeft <= 10 && timeLeft > 0){
+        finalTick.currentTime = 0; finalTick.play();
+      } else if(timeLeft > 10){
+        tickSound.currentTime = 0; tickSound.play();
+      }
+    }catch(e){}
+    if(timeLeft <= 0){
+      clearInterval(timer);
+      // treat as wrong answer (or skip to next depending on extra life)
+      handleWrongDueToTimeout();
+    }
+  },1000);
+}
+
+/* choose answer: given original index (a) and clicked button DOM */
+function chooseAnswer(answerIndex, btn){
+  clearInterval(timer);
+  const qobj = quizBank[current];
+  const correctIndex = qobj.a;
+  if(answerIndex === correctIndex){
+    // correct
+    // calculate points & coins: normal = +10 coins & +1 score (or +2 if doubleActive)
+    let points = 1;
+    let coinGain = 10;
+    if(doubleActive){
+      points = 2;
+      coinGain = 20;
+      doubleActive = false; // consume
+    }
+    score += points;
+    coins += coinGain;
+    localStorage.setItem('coins', coins);
+    updateCoinsUI();
+    // visual
+    btn.classList.add('correct');
+    try{ correctSound.currentTime = 0; correctSound.play(); }catch(e){}
+    // short pause then next
+    setTimeout(()=>{
+      current++; scoreDisplay.textContent = score;
+      loadQuestion();
+    },700);
+  } else {
+    // wrong
+    // if extra life active and not consumed -> consume and continue (no score change)
+    if(extraLifeActive && !extraLifeConsumed){
+      extraLifeConsumed = true;
+      // visual: indicate life used
+      btn.classList.add('wrong');
+      try{ wrongSound.currentTime=0; wrongSound.play(); }catch(e){}
+      // small message then continue to next question without penalizing
+      resultLine.textContent = 'Extra life used — aap safe ho gaye. Game continues.';
+      setTimeout(()=>{
+        resultLine.textContent = '';
+        current++;
+        loadQuestion();
+      },900);
+    } else {
+      // no extra life left -> wrong ends quiz (or move to next depending earlier design; user asked restart on wrong)
+      btn.classList.add('wrong');
+      try{ wrongSound.currentTime=0; wrongSound.play(); }catch(e){}
+      // End quiz and show restart
+      setTimeout(()=> endQuiz(),700);
+    }
+  }
+}
+
+/* handle timeout */
+function handleWrongDueToTimeout(){
+  // treat like wrong answer
+  if(extraLifeActive && !extraLifeConsumed){
+    extraLifeConsumed = true;
+    resultLine.textContent = 'Extra life used on timeout — continuing...';
+    setTimeout(()=>{ resultLine.textContent=''; current++; loadQuestion(); },900);
+  } else {
+    // time up ends quiz
+    endQuiz();
+  }
+}
+
+/* End quiz */
+function endQuiz(){
+  clearInterval(timer);
+  questionText.textContent = 'Quiz Khatam 🎉';
+  optionsWrap.innerHTML = '';
+  timerBox.textContent = '';
+  resultLine.textContent = `Score: ${score} / ${quizBank.length}  •  Coins: ${coins}`;
+  restartBtn.style.display = 'inline-block';
+  // clear loaded quizBank so next start uses default unless category replaced
+  // (we keep quizBank in case it came from API, but you may choose to clear)
+}
+
+/* ===================== Help functions (coin costs & one-time) ===================== */
+function use5050(){
+  const id='btn5050'; if(helpUsed[id]) return alert('50-50 already used this quiz');
+  if(coins < helpCosts[id]) return alert('Coins kam hain');
+  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
+  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
+  // remove two incorrect options
+  const qobj = quizBank[current];
+  if(!qobj) return;
+  const incorrect = qobj.opts.map((t,i)=>i).filter(i=>i!==qobj.a);
+  const hide = shuffleArray(incorrect).slice(0,2);
+  // hide buttons whose text matches those options
+  document.querySelectorAll('.opt').forEach(el=>{
+    if(hide.includes(qobj.opts.indexOf(el.textContent))) el.style.visibility='hidden';
+  });
+}
+
+function useHint(){
+  const id='btnHint'; if(helpUsed[id]) return alert('Hint already used'); if(coins < helpCosts[id]) return alert('Coins kam hain');
+  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
+  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
+  const qobj = quizBank[current]; if(!qobj) return;
+  alert(`Hint: Jawab ka pehla harf: "${qobj.opts[qobj.a].charAt(0)}"`);
+}
+
+function useAsk(){
+  const id='btnAsk'; if(helpUsed[id]) return alert('Ask already used'); if(coins < helpCosts[id]) return alert('Coins kam hain');
+  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
+  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
+  const qobj = quizBank[current]; if(!qobj) return;
+  // highlight correct
+  document.querySelectorAll('.opt').forEach(el=>{
+    if(el.textContent === qobj.opts[qobj.a]) el.style.border = '3px solid yellow';
+  });
+}
+
+function useSkip(){
+  const id='btnSkip'; if(helpUsed[id]) return alert('Skip already used'); if(coins < helpCosts[id]) return alert('Coins kam hain');
+  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
+  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
+  // skip to next question
+  clearInterval(timer); current++; if(current < quizBank.length) loadQuestion(); else endQuiz();
+}
+
+/* Double Points / Extra Life activation */
+function activateDouble(){
+  if(doubleActive) return alert('Double already active for next correct');
+  if(coins < 20) return alert('20 coins chahiye double ke liye');
+  coins -= 20; localStorage.setItem('coins', coins); updateCoinsUI();
+  doubleActive = true;
+  alert('Double Points activated for next correct answer!');
+}
+function activateLife(){
+  if(extraLifeActive && !extraLifeConsumed) return alert('Extra life already active');
+  if(coins < 30) return alert('30 coins chahiye extra life ke liye');
+  coins -= 30; localStorage.setItem('coins', coins); updateCoinsUI();
+  extraLifeActive = true; extraLifeConsumed = false;
+  alert('Extra Life purchased — ek galti bach jayegi!');
+}
+
+/* ===================== Category / API fetch ===================== */
+async function loadCategory(category){
+  // require at least 50 coins
+  if(coins < 50){ alert('Category load karne ke liye 50 coins chahiye'); return; }
+  // Deduct 50 immediately; if API fails, refund
+  coins -= 50; localStorage.setItem('coins', coins); updateCoinsUI();
+  catStatus.textContent = '⏳ Aap ka sawaal load ho raha hai...';
+  preview.textContent = '';
+  try{
+    // Request body (simple prompt)
+    const prompt = `Create 4 short multiple-choice Islamic questions (question and 4 options) about "${category}". Format each as: Q) question ? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | Correct: <A/B/C/D>. Return them separated by new lines.`;
+    const body = {
+      "content": [
+        {
+          "type": "text",
+          "text": prompt
+        }
+      ],
+      "temperature": 0.2
+    };
+    // The Google Gen AI endpoint may expect a slightly different format; we'll try common variants:
+    const resp = await fetch(API_MODEL_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        contents: [{ parts:[{ text: prompt }] }]
+      })
+    });
+    const data = await resp.json();
+    // Try to extract generated text robustly
+    let text = "";
+    try{
+      if(data.candidates && data.candidates.length){
+        // older response shape
+        text = data.candidates[0].content?.parts?.[0]?.text || data.candidates[0].output?.[0]?.content?.parts?.[0]?.text || "";
+      } else if(data.output && data.output[0] && data.output[0].content){
+        // alternative shape
+        const parts = data.output[0].content;
+        // join text parts
+        text = parts.map(p=>p.text||p.parts?.map(pp=>pp.text).join("")||"").join("\n");
+      } else {
+        text = JSON.stringify(data).slice(0,1000);
+      }
+    }catch(e){
+      text = "";
+    }
+
+    if(!text || text.length<10) throw new Error('Invalid API response');
+
+    // parse text: find up to 4 Q lines
+    const lines = text.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+    const questions = [];
+    for(const line of lines){
+      // try to parse pattern: Q) ... | A) opt | B) opt | C) opt | D) opt | Correct: X
+      const parts = line.split('|').map(p=>p.trim());
+      if(parts.length >= 5){
+        const qpart = parts[0].replace(/^Q[:\)]\s*/i,'').trim();
+        const opts = parts.slice(1,5).map(x=>x.replace(/^[A-D][:)\.]\s*/i,'').trim());
+        let corr = parts.find(p=>/Correct[:\s]/i.test(p));
+        let idx = 0;
+        if(corr){
+          const m = corr.match(/[A-D]/i);
+          if(m){ idx = {A:0,B:1,C:2,D:3}[m[0].toUpperCase()]; }
+        } else {
+          // fallback: try find "Correct: X" at end
+          idx = 0;
+        }
+        questions.push({q:qpart, opts:opts, a:idx});
+      } else {
+        // fallback simple: split by '?' then create options heuristically — skip
+      }
+      if(questions.length >= 4) break;
+    }
+
+    if(questions.length < 1) throw new Error('Parsing failed');
+
+    // set quizBank = questions (ensure shape)
+    quizBank = questions.map(x=>({q:x.q, opts:x.opts, a:x.a}));
+    preview.textContent = 'Loaded ' + quizBank.length + ' questions from ' + category;
+    catStatus.textContent = '✅ Sawal load ho gaye.';
+    // start the quiz with these questions
+    startQuiz();
+  }catch(err){
+    console.error(err);
+    catStatus.textContent = '⚠️ API error: ' + (err.message || 'failed');
+    alert('API load failed: ' + (err.message || 'server error') + '. Coins refunded.');
+    // refund
+    coins += 50; localStorage.setItem('coins', coins); updateCoinsUI();
+  }
+}
+
+/* On load: ensure coins present */
+if(!localStorage.getItem('coins')){ coins = coins || 0; localStorage.setItem('coins', coins); }
+updateCoinsUI();
+
+</script>
+</body>
+</html>
