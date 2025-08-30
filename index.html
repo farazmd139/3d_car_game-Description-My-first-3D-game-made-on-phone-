@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>القرآن الكريم - Faraz AI</title>
+    <title>Islamic App - Faraz AI</title>
     <meta name="theme-color" content="#161b22">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="favicon.png" type="image/png">
@@ -18,8 +18,6 @@
     <button id="menu-button" class="menu-button-floating"><span class="material-symbols-outlined">more_vert</span></button>
 
     <div id="side-menu" class="side-menu">
-        
-        
         <a href="#" onclick="openModal('credits-modal'); return false;">ہمارے بارے میں</a>
         <a href="https://telegra.ph/Privacy-Policy-for-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86-%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D9%85---Faraz-AI-08-01" target="_blank">پرائیویسی پالیسی</a>
     </div>
@@ -34,9 +32,13 @@
                 </div>
             </div>
         </div>
+        <!-- Quran Page removed but keeping the page structure for navigation -->
         <div id="quranPage" class="page">
-            <div class="page-header"><h1>القرآن الكريم</h1></div>
-            <ul id="surah-list"></ul>
+            <div class="page-header"><h1>8D Quran App</h1></div>
+            <!-- Quran content will be loaded from uploaded index.html -->
+            <div id="quran-content-container">
+                <!-- Content will be loaded here -->
+            </div>
         </div>
         <div id="aiPage" class="page">
             <div class="chat-container">
@@ -84,20 +86,12 @@
             <span class="close-button" onclick="closeAllModals()">&times;</span>
             <h2>ہمارے بارے میں اور شکریہ</h2>
             <p style="text-align: right; margin-bottom: 20px;">
-                یہ ایپ قرآن کی تعلیم کو آسان، جدید اور ہر ایک کے لیے قابلِ رسائی بنانے کے مقصد سے بنائی گئی ہے۔ यह پروجیکٹ دین کی خدمت میں ایک چھوٹی سی کوشش ہے۔
+                یہ ایپ اسلامی تعلیم کو آسان، جدید اور ہر ایک کے لیے قابلِ رسائی بنانے کے مقصد سے بنائی گئی ہے۔ یہ پروجیکٹ دین کی خدمت میں ایک چھوٹی سی کوشش ہے۔
             </p>
             <div class="credits-section">
-                <p><b>قرآنی متن اور API:</b>
-                    <br>
-                    قرآن کا عربی متن، تراجم اور سورہ کی معلومات کے لئے ہم <a href="https://quran.com" target="_blank">Quran.com</a> کے انتہائی شکر گزار ہیں۔ ان کی شاندار API کے بغیر یہ ایپ ممکن نہیں تھی۔
-                </p>
-                <p><b>آڈیو تلاوت:</b>
-                    <br>
-                    اس ایپ میں دل کو چھو لینے والی تلاوت مشہور قاری <b>الشیخ مشاری بن راشد العفاسی</b> کی ہے۔ آڈیو فائلیں Quran.com API کے ذریعے حاصل کی گئی ہیں۔ ہم دعا گو ہیں کہ اللہ ان کے درجات بلند فرمائے۔
-                </p>
                 <p><b>AI اسسٹنٹ "Islamic AI":</b>
                     <br>
-                    اسلامی سوالات کے جوابات دینے اور رہنمائی فراہم کرنے کے لئے <b>Google's Gemini AI</b> ماڈل کا استعمال کیا گیا ہے۔ यह ٹیکنالوجی دینی علم کو سمجھنے کا ایک جدید ذریعہ فراہم کرتی ہے۔
+                    اسلامی سوالات کے جوابات دینے اور رہنمائی فراہم کرنے کے لئے <b>Google's Gemini AI</b> ماڈل کا استعمال کیا گیا ہے۔ یہ ٹیکنالوجی دینی علم کو سمجھنے کا ایک جدید ذریعہ فراہم کرتی ہے۔
                 </p>
             </div>
             <p style="text-align: center; margin-top: 30px; font-size: 0.9rem; opacity: 0.8;">
@@ -127,3 +121,4 @@
     </script>
 </body>
 </html>
+
