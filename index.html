@@ -1,596 +1,367 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="ur">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Islamic Quiz — Kaun Banega Jannati Style</title>
-<style>
-  :root{
-    --bg1:#0d1b2a; --bg2:#1b263b; --card:#0f1724; --accent:#ffd166;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; font-family: "Segoe UI", Roboto, Arial, sans-serif;
-    background: linear-gradient(135deg,var(--bg1),var(--bg2)); color:#fff;
-    display:flex; flex-direction:column; align-items:center; padding:18px 12px 48px;
-  }
-  h1{margin:6px 0 14px; font-size:28px; text-shadow:0 6px 18px rgba(0,0,0,.6)}
-  /* Username modal / 3D box */
-  #usernameBox{
-    width:min(520px,96%); background:linear-gradient(135deg,#14213d88,#03102588);
-    border-radius:20px; padding:20px; margin-bottom:14px; box-shadow: 0 20px 60px rgba(0,0,0,.6);
-    display:flex; align-items:center; gap:12px; justify-content:center; flex-direction:column;
-  }
-  #usernameBox input{width:80%; padding:10px 12px; border-radius:10px; border:none; font-size:16px; text-align:center}
-  #usernameBox button{padding:10px 18px; border-radius:10px; border:none; cursor:pointer; background:linear-gradient(90deg,#1dd1a1,#48dbfb); color:#002; font-weight:700}
-  /* Coins + user */
-  #topBar{width:min(980px,96%); display:flex; justify-content:space-between; align-items:center; margin-bottom:12px}
-  #coins{font-weight:800; color:#ffd700; text-shadow:0 2px 8px rgba(0,0,0,.6)}
-  #userLabel{opacity:.9}
-  /* Page layout */
-  .layout{width:min(980px,96%); display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start}
-  @media (max-width:920px){ .layout{grid-template-columns:1fr} }
-  /* Quiz Card */
-  .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02)); border-radius:18px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.55); border:1px solid rgba(255,255,255,.06)}
-  .quizMain{padding:12px; display:flex; flex-direction:column; align-items:center; gap:12px}
-  .timerBox{
-    width:140px; height:140px; border-radius:18px; display:grid; place-items:center; font-size:34px; font-weight:800;
-    background:linear-gradient(135deg,#ff6b6b,#feca57,#48dbfb,#1dd1a1); background-size:300% 300%;
-    box-shadow: 0 18px 40px rgba(0,0,0,.5), inset 0 -8px 30px rgba(0,0,0,.15);
-    animation: gradientMove 6s linear infinite;
-  }
-  @keyframes gradientMove {0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
-  .questionText{ font-size:20px; text-align:center; color:var(--accent); font-weight:700; text-shadow:0 4px 18px rgba(0,0,0,.6); padding:6px 8px}
-  .options{width:100%; display:grid; gap:12px; grid-template-columns: 1fr 1fr}
-  @media (max-width:520px){ .options{grid-template-columns:1fr} }
-  .opt{
-    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-    border-radius:12px; padding:14px; cursor:pointer; text-align:left; font-weight:800; font-size:16px;
-    box-shadow: 0 14px 30px rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.06);
-    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-  }
-  .opt:hover{ transform: translateY(-6px); box-shadow:0 26px 60px rgba(0,0,0,.6) }
-  .opt.correct{ border-color: rgba(0,220,120,.6); box-shadow:0 0 20px rgba(0,220,120,.18) }
-  .opt.wrong{ border-color: rgba(255,80,80,.7); box-shadow:0 0 20px rgba(255,80,80,.12) }
-  /* right panel: categories + helpers */
-  .side{display:flex; flex-direction:column; gap:12px}
-  .categories{display:flex; flex-wrap:wrap; gap:8px}
-  .catBtn{padding:10px 12px; border-radius:10px; background:linear-gradient(90deg,#254, #136); color:#fff; border:none; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,.45)}
-  .catBtn:hover{transform:translateY(-6px)}
-  .helpRow{display:flex; gap:8px; flex-wrap:wrap}
-  .helpBtn{padding:10px 12px; border-radius:10px; background:linear-gradient(90deg,#ff9f43,#ee5253); border:none; cursor:pointer; font-weight:800; box-shadow:0 10px 24px rgba(0,0,0,.45)}
-  .helpBtn.disabled{opacity:.45; cursor:not-allowed; transform:none}
-  .small{font-size:13px; color:#ddd}
-  .startRow{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
-  /* footer */
-  .centerSmall{font-size:13px; color:#cfd8ff66; text-align:center; margin-top:8px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8D Quran App - Faraz AI ke Saath</title>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0d121a">
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Noto+Nastaliq+Urdu:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <style>
+        :root {
+            --glow-color1: #0ebeff; --glow-color2: #ffdd40;
+            --glow-color3: #ff4971; --glow-color4: #25d366;
+            --highlight-glow: #f39c12;
+            --chat-bg: #1e2732;
+            --chat-header-bg: #161b22;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Amiri', serif; background-color: #0d121a;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
+            background-size: 25px 25px; animation: background-pan 50s linear infinite;
+            margin: 0; padding: 20px; direction: rtl; overflow-x: hidden;
+            color: #ecf0f1;
+        }
+        @keyframes background-pan { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+        #homeScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90vh; text-align: center; }
+        .aura-container { position: relative; padding: 30px; margin-bottom: 30px; }
+        .aura-container::before, .aura-container::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 30px; z-index: -1; filter: blur(30px); animation: aura-pulse 6s ease-in-out infinite; }
+        .aura-container::before { background: linear-gradient(45deg, var(--glow-color1), var(--glow-color2)); }
+        .aura-container::after { background: linear-gradient(-45deg, var(--glow-color3), var(--glow-color4)); animation-delay: -3s; }
+        @keyframes aura-pulse { 0%, 100% { opacity: 0.6; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } }
+        .home-header { color: #ecf0f1; font-family: 'Noto Nastaliq Urdu', sans-serif; }
+        .home-header h2 { font-size: 2.5rem; opacity: 0.9; letter-spacing: 2px; text-shadow: 0 0 15px rgba(236, 240, 241, 0.4); }
+        .typing-container { padding: 10px; border-bottom: 2px solid rgba(243, 156, 18, 0.5); display: inline-block; }
+        #bismillah-text { font-family: 'Amiri', serif; font-size: 3rem; color: var(--highlight-glow); font-weight: 700; text-shadow: 0 0 5px var(--highlight-glow), 0 0 15px var(--highlight-glow), 0 0 30px #e67e22; width: 0; white-space: nowrap; overflow: hidden; animation: bismillah_typing 8s steps(29, end) infinite; }
+        @keyframes bismillah_typing { 0% { width: 0; } 50% { width: 100%; } 80% { width: 100%; } 100% { width: 0; } }
+        .menu-container { width: 100%; max-width: 1200px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; font-family: 'Noto Nastaliq Urdu', sans-serif; margin-top: 50px; }
+        .menu-box { padding: 35px; border-radius: 20px; cursor: pointer; box-shadow: inset 0 -5px 15px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.1); position: relative; animation: float-animation 6s ease-in-out infinite; transition: transform 0.3s ease; }
+        .menu-box:hover { animation-play-state: paused; transform: translateY(-10px) scale(1.05) !important; }
+        .menu-title { color: white; font-size: 2.2rem; font-weight: 700; text-shadow: 0 0 3px rgba(0,0,0,0.8), 0 2px 5px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; margin: 0 auto; display: inline-block; }
+        .menu-box-1 { background: linear-gradient(145deg, #2ecc71, #27ae60); }
+        .menu-box-2 { background: linear-gradient(145deg, #e74c3c, #c0392b); }
+        .menu-box-3 { background: linear-gradient(145deg, #e84393, #d81b60); }
+        .menu-box-4 { background: linear-gradient(145deg, #3498db, #2980b9); }
+        .menu-box-5 { background: linear-gradient(145deg, #f1c40f, #f39c12); }
+        .menu-box-6 { background: linear-gradient(145deg, #1abc9c, #16a085); }
+        .menu-box-7 { background: linear-gradient(145deg, #9b59b6, #8e44ad); }
+        .menu-box-8 { background: linear-gradient(145deg, #e67e22, #d35400); }
+        .menu-title { animation: typing-short 7s steps(10, end) infinite; }
+        @keyframes typing-short { 0% { width: 0; } 45% { width: 100%; } 80% { width: 100%; } 100% { width: 0; } }
+        .surah-page { display: none; padding-top: 70px; /* Add padding to avoid content hiding behind fixed buttons */ }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 3.5rem; color: #ecf0f1; text-shadow: 0px 2px 5px rgba(0,0,0,0.5); font-weight: 700; }
+        .surah-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; perspective: 1500px; padding-top: 20px; }
+        @keyframes box-color-change { 0%, 100% { background: linear-gradient(145deg, #2980b9, #3498db); } 16.6% { background: linear-gradient(145deg, #8e44ad, #9b59b6); } 33.3% { background: linear-gradient(145deg, #16a085, #1abc9c); } 50% { background: linear-gradient(145deg, #d35400, #e67e22); } 66.6% { background: linear-gradient(145deg, #c0392b, #e74c3c); } 83.3% { background: linear-gradient(145deg, #2c3e50, #34495e); } }
+        .ayah-box { padding: 40px 30px; border-radius: 20px; color: #fff; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateY(40px); transition: opacity 0.6s ease-out, transform 0.6s ease-out, background 0.5s ease, box-shadow 0.5s ease; animation: box-color-change 18s linear infinite; }
+        .ayah-box.visible { opacity: 1; transform: translateY(0); }
+        .ayah-text { font-size: 2.2rem; line-height: 2.9; text-align: center; font-weight: 700; text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.4), 0px 4px 6px rgba(0, 0, 0, 0.4); animation: color-cycle 20s linear infinite; }
+        @keyframes color-cycle { 0% { color: #ffffff; } 25% { color: #d1eaff; } 50% { color: #e0ffed; } 75% { color: #fff5d6; } 100% { color: #ffffff; } }
+        .ayah-number { display: inline-block; font-size: 1.5rem; padding-left: 10px; opacity: 0.7; }
+        .back-button { position: fixed; top: 20px; left: 20px; padding: 12px 20px; background-color: #ecf0f1; color: #2c3e50; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: 'Noto Nastaliq Urdu', sans-serif; }
+        .audio-player-wrapper { position: relative; max-width: 550px; margin: 0 auto 35px auto; padding: 15px; border-radius: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); animation: box-color-change 18s linear infinite; }
+        .audio-player-wrapper::before, .audio-player-wrapper::after { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border-radius: 22px; z-index: -1; filter: blur(25px); animation: aura-pulse 8s ease-in-out infinite alternate; }
+        .audio-player-wrapper::before { background: linear-gradient(45deg, var(--glow-color1), var(--glow-color3)); }
+        .audio-player-wrapper::after { background: linear-gradient(-45deg, var(--glow-color2), var(--glow-color4)); animation-delay: -4s; }
+        .custom-audio-player { display: flex; align-items: center; gap: 15px; padding: 0 10px; }
+        .play-pause-btn { background: linear-gradient(145deg, rgba(255,255,255,0.2), rgba(255,255,255,0)); border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 55px; height: 55px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: transform 0.2s ease, box-shadow 0.2s ease; flex-shrink: 0; }
+        .play-pause-btn:hover { transform: scale(1.1); box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
+        .play-pause-btn svg { width: 28px; height: 28px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.5)); fill: white; }
+        .progress-container { width: 100%; height: 8px; background-color: rgba(0,0,0,0.3); border-radius: 10px; cursor: pointer; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
+        .progress-bar { height: 100%; width: 0%; border-radius: 10px; background: linear-gradient(90deg, var(--glow-color1), var(--glow-color2), var(--glow-color3)); background-size: 300% 100%; animation: gradient-flow 5s linear infinite; box-shadow: 0 0 8px var(--glow-color1); transition: width 0.1s linear; }
+        @keyframes gradient-flow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+        .time-display { font-family: monospace; font-size: 0.9rem; color: #bdc3c7; text-shadow: 0 1px 2px rgba(0,0,0,0.5); text-align: center; min-width: 90px; }
+        #settings-icon { position: fixed; top: 20px; right: 20px; z-index: 1000; cursor: pointer; padding: 8px; background-color: rgba(44, 62, 80, 0.5); border-radius: 50%; transition: background-color 0.3s, transform 0.3s; }
+        #settings-icon:hover { background-color: rgba(44, 62, 80, 0.9); transform: rotate(45deg); }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); align-items: center; justify-content: center; }
+        .modal-content { background-color: #0d121a; border: 1px solid rgba(255, 255, 255, 0.2); padding: 50px 40px; border-radius: 15px; width: 90%; max-width: 450px; text-align: center; position: relative; animation: modal-fade-in 0.5s; }
+        @keyframes modal-fade-in { from {opacity: 0; transform: scale(0.9);} to {opacity: 1; transform: scale(1);} }
+        .close-button { color: #aaa; position: absolute; top: 10px; right: 20px; font-size: 28px; font-weight: bold; }
+        .close-button:hover, .close-button:focus { color: white; text-decoration: none; cursor: pointer; }
+        .modal-content a { color: #0ebeff; font-size: 1.5rem; font-weight: bold; text-decoration: none; transition: color 0.3s; font-family: Arial, sans-serif; direction: ltr; }
+        .modal-content a:hover { color: #ffdd40; }
+        #ai-chat-button { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: linear-gradient(45deg, var(--glow-color1), var(--glow-color3)); color: white; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(0,0,0,0.4); cursor: pointer; z-index: 1001; transition: transform 0.3s, box-shadow 0.3s; }
+        #ai-chat-button:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(255, 73, 113, 0.5); }
+        #ai-chat-button .material-symbols-outlined { font-size: 32px; transition: transform 0.5s ease-in-out; }
+        #ai-chat-button:hover .material-symbols-outlined { transform: rotate(360deg); }
+        #ai-chat-modal { z-index: 2001; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .chat-container { width: 95%; max-width: 500px; height: 85%; background-color: var(--chat-bg); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); transform: scale(0.9); animation: zoomIn 0.3s ease forwards; }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .chat-header { padding: 20px; background-color: var(--chat-header-bg); color: white; text-align: center; font-size: 1.5rem; font-family: 'Noto Nastaliq Urdu', sans-serif; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; display: flex; justify-content: center; align-items: center; }
+        .chat-header .material-symbols-outlined { margin-left: 10px; color: var(--glow-color2); font-size: 2rem; }
+        #close-chat-button { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 2rem; color: #aaa; transition: color 0.2s, transform 0.2s; }
+        #close-chat-button:hover { color: white; transform: translateY(-50%) rotate(90deg); }
+        .chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; direction: ltr; display: flex; flex-direction: column; gap: 15px; }
+        .message { padding: 12px 18px; border-radius: 20px; max-width: 85%; line-height: 1.7; font-family: 'Noto Nastaliq Urdu', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1.1rem; color: #e0e0e0; position: relative; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .user-message { background-color: #2a3b47; align-self: flex-end; margin-left: auto; border-bottom-right-radius: 5px; animation: slideInRight 0.3s ease forwards; }
+        .ai-message { background-color: #323d49; align-self: flex-start; border-bottom-left-radius: 5px; animation: slideInLeft 0.3s ease forwards; }
+        @keyframes slideInRight { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideInLeft { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .typing-indicator { display: flex; align-items: center; gap: 5px; }
+        .typing-indicator span { width: 8px; height: 8px; background-color: #aaa; border-radius: 50%; animation: typing 1s infinite; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .chat-input-area { display: flex; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); background-color: var(--chat-header-bg); }
+        #chat-input { flex-grow: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #444; font-size: 1rem; background-color: #323d49; color: white; transition: border-color 0.2s; font-family: 'Noto Nastaliq Urdu', sans-serif; }
+        #chat-input:focus { outline: none; border-color: var(--glow-color1); }
+        #send-chat-button { width: 50px; height: 50px; margin-left: 10px; border-radius: 50%; border: none; background-color: var(--glow-color1); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; }
+        #send-chat-button:hover { background-color: #0b9dcc; }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            #bismillah-text { font-size: 2.2rem; } .home-header h2 { font-size: 2rem; } .menu-title { font-size: 1.8rem; } .header h1 { font-size: 2.5rem; } .ayah-box { transform: none; padding: 20px; } .ayah-text { font-size: 1.8rem; } .back-button { font-size: 1rem; padding: 10px 15px; } #settings-icon { top: 15px; right: 15px; } .modal-content a { font-size: 1.3rem; }
+        }
+    </style>
 </head>
 <body>
-
-<h1>🕌 Kaun Banega Jannati — Islamic Quiz</h1>
-
-<!-- Username / First-time 3D box -->
-<div id="usernameBox" class="card" style="display:none">
-  <div style="font-weight:900; font-size:18px">Apna Naam Darj Karen</div>
-  <input id="usernameInput" placeholder="Shehzada Faraz 😊" />
-  <div style="display:flex; gap:10px">
-    <button onclick="saveUsername()">Save & Get 200 Coins</button>
-  </div>
-  <div class="small" style="margin-top:8px">Aapka naam local device me save hoga.</div>
-</div>
-
-<!-- Top bar -->
-<div id="topBar">
-  <div id="userLabel" class="small"></div>
-  <div id="coins" >Coins: 0</div>
-</div>
-
-<!-- Layout -->
-<div class="layout">
-  <!-- LEFT: Quiz Card -->
-  <div class="card">
-    <div class="quizMain">
-      <div id="quizHeader" style="width:100%; display:flex; justify-content:space-between; align-items:center">
-        <div class="small">Round: <span id="roundDisplay">0</span>/<span id="totalQ">0</span></div>
-        <div class="small">Score: <span id="scoreDisplay">0</span></div>
-      </div>
-
-      <div id="timerBox" class="timerBox">30</div>
-
-      <div id="questionCard" style="width:100%">
-        <div class="questionText" id="questionText">Start karne ke liye Start Quiz dabayein</div>
-        <div class="options" id="options"></div>
-      </div>
-
-      <div class="startRow" style="margin-top:6px">
-        <button id="startBtn" onclick="startQuiz()">Start Quiz</button>
-        <button id="restartBtn" onclick="restartQuiz()" style="display:none">Restart Quiz</button>
-      </div>
-
-      <div id="resultLine" class="centerSmall"></div>
-    </div>
-  </div>
-
-  <!-- RIGHT: Category + helpers -->
-  <div class="side">
-    <div class="card" style="padding:12px">
-      <div style="font-weight:900; margin-bottom:8px">Categories (API)</div>
-      <div class="categories" id="categories">
-        <button class="catBtn" onclick="loadCategory('Namaz')">Namaz</button>
-        <button class="catBtn" onclick="loadCategory('Quran')">Quran</button>
-        <button class="catBtn" onclick="loadCategory('Hadees')">Hadees</button>
-        <button class="catBtn" onclick="loadCategory('Sahaba')">Sahaba</button>
-        <button class="catBtn" onclick="loadCategory('Nabi')">Nabi</button>
-        <button class="catBtn" onclick="loadCategory('Islam')">Islam</button>
-        <button class="catBtn" onclick="loadCategory('Tafseer')">Tafseer</button>
-        <button class="catBtn" onclick="loadCategory('Seerah')">Seerah</button>
-      </div>
-      <div class="small" style="margin-top:8px">API fetch cost: <b>50 coins</b> per category (refund on failure)</div>
-      <div id="catStatus" class="small" style="margin-top:8px; color:#ffd"></div>
+    <!-- Baaki sab kuch waisa hi hai -->
+    <div id="settings-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="28px" height="28px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.30-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12-.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69-.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25-1.17-.59-1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg></div>
+    <div id="privacy-modal" class="modal"><div class="modal-content"><span class="close-button">×</span><a href="https://www.termsfeed.com/live/7fc9538c-1151-42c8-8a71-5debf6df2214" target="_blank">View Privacy Policy</a></div></div>
+    
+    <div id="homeScreen">
+        <div class="aura-container">
+            <div class="home-header">
+                <h2>قرآن شریف</h2>
+                <div class="typing-container">
+                    <h1 id="bismillah-text">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</h1>
+                </div>
+            </div>
+        </div>
+        <div id="main-menu" class="menu-container"></div>
     </div>
 
-    <div class="card" style="padding:12px">
-      <div style="font-weight:900; margin-bottom:8px">Helps (one use per quiz)</div>
-      <div class="helpRow">
-        <button id="btn5050" class="helpBtn" onclick="use5050()">50-50<br><span class="small">5 coins</span></button>
-        <button id="btnHint" class="helpBtn" onclick="useHint()">Hint<br><span class="small">10 coins</span></button>
-        <button id="btnAsk" class="helpBtn" onclick="useAsk()">Ask<br><span class="small">20 coins</span></button>
-        <button id="btnSkip" class="helpBtn" onclick="useSkip()">Skip<br><span class="small">30 coins</span></button>
-      </div>
-      <div style="height:10px"></div>
-      <div style="font-weight:900; margin-bottom:8px">Spend Coins</div>
-      <div class="helpRow">
-        <button class="helpBtn" onclick="activateDouble()">Double Points<br><span class="small">20 coins</span></button>
-        <button class="helpBtn" onclick="activateLife()">Extra Life<br><span class="small">30 coins</span></button>
-      </div>
-      <div class="small" style="margin-top:8px">Double: next correct gives + points. Extra life saves one wrong answer.</div>
+    <div id="surah-pages-container"></div>
+   
+    <button id="ai-chat-button">
+        <span class="material-symbols-outlined">smart_toy</span>
+    </button>
+    <div id="ai-chat-modal" class="modal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <span class="material-symbols-outlined">psychology</span>
+                فراز AI
+                <span id="close-chat-button">×</span>
+            </div>
+            <div class="chat-messages">
+                 <div class="message ai-message">
+                    اسلام علیکم! میں فراز ہوں۔ میں آپ کی کیا مدد کر سکتا ہوں؟
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="یہاں پیغام لکھیں...">
+                <button id="send-chat-button">
+                     <span class="material-symbols-outlined">send</span>
+                </button>
+            </div>
+        </div>
     </div>
-
-    <div class="card" style="padding:12px">
-      <div style="font-weight:900">Loaded Questions (preview)</div>
-      <div id="preview" class="small" style="margin-top:8px; min-height:80px">—</div>
-    </div>
-  </div>
-</div>
-
-<div class="centerSmall">Built for testing — for production move API key to a secure server.</div>
-
-<!-- Sounds (public small files) -->
-<audio id="tickSound" src="https://www.soundjay.com/button/sounds/button-16.mp3" preload="auto"></audio>
-<audio id="finalTick" src="https://www.soundjay.com/button/sounds/beep-07.mp3" preload="auto"></audio>
-<audio id="correctSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="https://www.soundjay.com/button/sounds/button-10.mp3" preload="auto"></audio>
 
 <script>
-/* ===========================
-   Configuration & storage
-   =========================== */
-const API_KEY = "AIzaSyDB4TUj3zsU90jCfI8L0yivvWIYipUtq3c"; // you supplied
-const API_MODEL_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+    // ... Aapka poora JavaScript code yahan waisa hi rahega ...
+    document.addEventListener('DOMContentLoaded', () => {
 
-let defaultBank = [
-  {q:"Islam ka pehla Kalma kya hai?", opts:["La ilaha illallah","Bismillah","Allahu Akbar","SubhanAllah"], a:0},
-  {q:"Roza kis mahine me farz hai?", opts:["Rajab","Ramzan","Shaban","Muharram"], a:1},
-  {q:"Quran me kitne sipare hain?", opts:["20","30","40","10"], a:1},
-  {q:"Zakat ka farz kitni rakat hai?", opts:["2.5%","10%","5%","1%"], a:0},
-  {q:"Haj kis shehar me ada hota hai?", opts:["Medina","Mecca","Jerusalem","Taif"], a:1},
-  {q:"Namaz me kitne rakat Farz hain?", opts:["5","6","4","3"], a:0},
-  {q:"Surah Fatiha me kitne ayat hain?", opts:["6","7","5","8"], a:1},
-  {q:"Eid ul-Fitr ka taalluq kaunse ibadat se hai?", opts:["Roza","Zakat","Hajj","Jihad"], a:0},
-  {q:"Jumma ki namaz kab ada hoti hai?", opts:["Subah","Dopehar","Sham","Raat"], a:1},
-  {q:"Quran me sabse lambi surah kaun si hai?", opts:["Al-Fatiha","Al-Baqarah","An-Nas","Al-Ikhlas"], a:1}
-];
+        const homeScreen = document.getElementById('homeScreen');
+        const mainMenuContainer = document.getElementById('main-menu');
+        const surahPagesContainer = document.getElementById('surah-pages-container');
+        const settingsIcon = document.getElementById('settings-icon');
+        const privacyModal = document.getElementById('privacy-modal');
+        const closeButton = privacyModal.querySelector('.close-button');
+        const aiChatButton = document.getElementById('ai-chat-button');
+        const aiChatModal = document.getElementById('ai-chat-modal');
+        const closeChatButton = document.getElementById('close-chat-button');
 
-// State
-let quizBank = [];        // current quiz questions (array of {q,opts,a})
-let current = 0;
-let score = 0;
-let timer = null;
-let timeLimit = 30;
-let timeLeft = timeLimit;
-let coins = parseInt(localStorage.getItem('coins') || '0', 10);
-let username = localStorage.getItem('username') || "";
-let helpUsed = {btn5050:false, btnHint:false, btnAsk:false, btnSkip:false};
-let helpCosts = {btn5050:5, btnHint:10, btnAsk:20, btnSkip:30};
-let doubleActive = false;      // double points currently active (applies to next correct)
-let extraLifeActive = false;   // extra life purchased (true until used)
-let extraLifeConsumed = false; // whether extra life already used
-let totalQuestionsToPlay = 10;
+        const surahNames = [
+            "الفاتحہ", "البقرہ", "آل عمران", "النساء", "المائدہ", "الأنعام", "الأعراف", "الأنفال", "التوبہ", "یونس", "ہود", "یوسف", "الرعد", "ابراہیم", "الحجر", "النحل", "الإسراء", "الکہف", "مریم", "طہ", "الأنبیاء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنکبوت", "الروم", "لقمان", "السجدہ", "الأحزاب", "سبا", "فاطر", "یٰسٓ", "الصافات", "ص", "الزمر", "غافر", "فصلت", "الشوریٰ", "الزخرف", "الدخان", "الجاثیہ", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق", "الذاریات", "الطور", "النجم", "القمر", "الرحمٰن", "الواقعہ", "الحدید", "المجادلہ", "الحشر", "الممتحنہ", "الصف", "الجمعہ", "المنافقون", "التغابن", "الطلاق", "التحریم", "الملک", "القلم", "الحاقہ", "المعارج", "نوح", "الجن", "المزمل", "المدثر", "القیامہ", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس", "التکویر", "الإنفطار", "المطففین", "الإنشقاق", "البروج", "الطارق", "الأعلیٰ", "الغاشیہ", "الفجر", "البلد", "الشمس", "اللیل", "الضحیٰ", "الشرح", "التین", "العلق", "القدر", "البینہ", "الزلزلہ", "العادیات", "القارعہ", "التکاثر", "العصر", "الہمزہ", "الفیل", "قریش", "الماعون", "الکوثر", "الکافرون", "النصر", "المسد", "الإخلاص", "الفلق", "الناس"
+        ];
 
-/* DOM refs */
-const coinsEl = document.getElementById('coins');
-const userLabel = document.getElementById('userLabel');
-const usernameBox = document.getElementById('usernameBox');
-const timerBox = document.getElementById('timerBox');
-const questionText = document.getElementById('questionText');
-const optionsWrap = document.getElementById('options');
-const startBtn = document.getElementById('startBtn');
-const restartBtn = document.getElementById('restartBtn');
-const resultLine = document.getElementById('resultLine');
-const preview = document.getElementById('preview');
-const catStatus = document.getElementById('catStatus');
-const roundDisplay = document.getElementById('roundDisplay');
-const totalQ = document.getElementById('totalQ');
-const scoreDisplay = document.getElementById('scoreDisplay');
-
-const tickSound = document.getElementById('tickSound');
-const finalTick = document.getElementById('finalTick');
-const correctSound = document.getElementById('correctSound');
-const wrongSound = document.getElementById('wrongSound');
-
-/* Initial UI */
-updateCoinsUI();
-if(!username){
-  usernameBox.style.display = 'flex';
-} else {
-  userLabel.textContent = username;
-}
-
-/* Save username */
-function saveUsername(){
-  const v = document.getElementById('usernameInput').value.trim();
-  if(!v){ alert('Naam daalo bhai!'); return; }
-  username = v;
-  localStorage.setItem('username', username);
-  // first time bonus if coins not set (only give once)
-  if(!localStorage.getItem('bonusGiven')){
-    coins += 200;
-    localStorage.setItem('bonusGiven','1');
-    localStorage.setItem('coins', coins);
-  }
-  usernameBox.style.display='none';
-  userLabel.textContent = username;
-  updateCoinsUI();
-}
-
-/* Update coins UI */
-function updateCoinsUI(){
-  coinsEl.textContent = `Coins: ${coins}` + (username? ` | ${username}`:'');
-}
-
-/* Shuffle helper */
-function shuffleArray(a){
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-/* START QUIZ using either default bank or current quizBank if loaded */
-function startQuiz(){
-  // ensure audio allowed: user clicked
-  startBtn.style.display='none';
-  restartBtn.style.display='none';
-  resultLine.textContent = '';
-  // if no custom bank loaded, use shuffled default questions
-  if(!quizBank || quizBank.length===0){
-    quizBank = defaultBank.map(x=>({q:x.q, opts: [...x.opts], a:x.a}));
-    shuffleArray(quizBank);
-    // ensure at least totalQuestionsToPlay items
-    if(quizBank.length < totalQuestionsToPlay){
-      // duplicate if needed
-      while(quizBank.length < totalQuestionsToPlay){
-        quizBank.push(...quizBank.slice(0, Math.min(quizBank.length, totalQuestionsToPlay-quizBank.length)));
-      }
-    }
-  }
-  // trim to totalQuestionsToPlay and shuffle
-  quizBank = shuffleArray(quizBank).slice(0, totalQuestionsToPlay);
-  current = 0; score = 0;
-  helpUsed = {btn5050:false, btnHint:false, btnAsk:false, btnSkip:false};
-  document.querySelectorAll('.helpBtn, .helpBtn.helpBtn').forEach(b=>{ /* visual buttons remain; individual disabling handled below */ });
-  // enable help buttons visually
-  document.getElementById('btn5050').classList.remove('disabled'); document.getElementById('btn5050').disabled = false;
-  document.getElementById('btnHint').classList.remove('disabled'); document.getElementById('btnHint').disabled = false;
-  document.getElementById('btnAsk').classList.remove('disabled'); document.getElementById('btnAsk').disabled = false;
-  document.getElementById('btnSkip').classList.remove('disabled'); document.getElementById('btnSkip').disabled = false;
-
-  doubleActive = false; extraLifeActive = false; extraLifeConsumed=false;
-  totalQ.textContent = totalQuestionsToPlay;
-  roundDisplay.textContent = 0;
-  scoreDisplay.textContent = 0;
-  loadQuestion();
-}
-
-/* Restart */
-function restartQuiz(){
-  quizBank = []; // clear custom bank so default used
-  startBtn.style.display='inline-block';
-  restartBtn.style.display='none';
-  questionText.textContent = 'Start karne ke liye Start Quiz dabayein';
-  optionsWrap.innerHTML = '';
-  timerBox.textContent = '';
-  preview.textContent = '—';
-}
-
-/* Load single question */
-function loadQuestion(){
-  if(current >= quizBank.length){
-    endQuiz();
-    return;
-  }
-  // prepare
-  const qobj = quizBank[current];
-  // increment round shown (1-based)
-  roundDisplay.textContent = current+1;
-  totalQ.textContent = quizBank.length;
-  scoreDisplay.textContent = score;
-  // shuffle options and keep index of correct
-  const opts = qobj.opts.map((t,i)=>({t,i}));
-  shuffleArray(opts);
-  qobj._shuffled = opts; // store for answer check
-  // render
-  questionText.textContent = `Q${current+1}. ${qobj.q}`;
-  optionsWrap.innerHTML = '';
-  opts.forEach(item=>{
-    const btn = document.createElement('div');
-    btn.className = 'opt';
-    btn.textContent = item.t;
-    btn.onclick = ()=> chooseAnswer(item.i, btn); // original index
-    optionsWrap.appendChild(btn);
-  });
-  preview.textContent = qobj.q;
-  startTimer();
-}
-
-/* Timer with tick sounds; last10 use finalTick */
-function startTimer(){
-  clearInterval(timer);
-  timeLeft = timeLimit;
-  timerBox.textContent = timeLeft;
-  timer = setInterval(()=>{
-    timeLeft--;
-    timerBox.textContent = timeLeft;
-    // play sound: last 10 use finalTick, else tickSound
-    try{
-      if(timeLeft <= 10 && timeLeft > 0){
-        finalTick.currentTime = 0; finalTick.play();
-      } else if(timeLeft > 10){
-        tickSound.currentTime = 0; tickSound.play();
-      }
-    }catch(e){}
-    if(timeLeft <= 0){
-      clearInterval(timer);
-      // treat as wrong answer (or skip to next depending on extra life)
-      handleWrongDueToTimeout();
-    }
-  },1000);
-}
-
-/* choose answer: given original index (a) and clicked button DOM */
-function chooseAnswer(answerIndex, btn){
-  clearInterval(timer);
-  const qobj = quizBank[current];
-  const correctIndex = qobj.a;
-  if(answerIndex === correctIndex){
-    // correct
-    // calculate points & coins: normal = +10 coins & +1 score (or +2 if doubleActive)
-    let points = 1;
-    let coinGain = 10;
-    if(doubleActive){
-      points = 2;
-      coinGain = 20;
-      doubleActive = false; // consume
-    }
-    score += points;
-    coins += coinGain;
-    localStorage.setItem('coins', coins);
-    updateCoinsUI();
-    // visual
-    btn.classList.add('correct');
-    try{ correctSound.currentTime = 0; correctSound.play(); }catch(e){}
-    // short pause then next
-    setTimeout(()=>{
-      current++; scoreDisplay.textContent = score;
-      loadQuestion();
-    },700);
-  } else {
-    // wrong
-    // if extra life active and not consumed -> consume and continue (no score change)
-    if(extraLifeActive && !extraLifeConsumed){
-      extraLifeConsumed = true;
-      // visual: indicate life used
-      btn.classList.add('wrong');
-      try{ wrongSound.currentTime=0; wrongSound.play(); }catch(e){}
-      // small message then continue to next question without penalizing
-      resultLine.textContent = 'Extra life used — aap safe ho gaye. Game continues.';
-      setTimeout(()=>{
-        resultLine.textContent = '';
-        current++;
-        loadQuestion();
-      },900);
-    } else {
-      // no extra life left -> wrong ends quiz (or move to next depending earlier design; user asked restart on wrong)
-      btn.classList.add('wrong');
-      try{ wrongSound.currentTime=0; wrongSound.play(); }catch(e){}
-      // End quiz and show restart
-      setTimeout(()=> endQuiz(),700);
-    }
-  }
-}
-
-/* handle timeout */
-function handleWrongDueToTimeout(){
-  // treat like wrong answer
-  if(extraLifeActive && !extraLifeConsumed){
-    extraLifeConsumed = true;
-    resultLine.textContent = 'Extra life used on timeout — continuing...';
-    setTimeout(()=>{ resultLine.textContent=''; current++; loadQuestion(); },900);
-  } else {
-    // time up ends quiz
-    endQuiz();
-  }
-}
-
-/* End quiz */
-function endQuiz(){
-  clearInterval(timer);
-  questionText.textContent = 'Quiz Khatam 🎉';
-  optionsWrap.innerHTML = '';
-  timerBox.textContent = '';
-  resultLine.textContent = `Score: ${score} / ${quizBank.length}  •  Coins: ${coins}`;
-  restartBtn.style.display = 'inline-block';
-  // clear loaded quizBank so next start uses default unless category replaced
-  // (we keep quizBank in case it came from API, but you may choose to clear)
-}
-
-/* ===================== Help functions (coin costs & one-time) ===================== */
-function use5050(){
-  const id='btn5050'; if(helpUsed[id]) return alert('50-50 already used this quiz');
-  if(coins < helpCosts[id]) return alert('Coins kam hain');
-  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
-  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
-  // remove two incorrect options
-  const qobj = quizBank[current];
-  if(!qobj) return;
-  const incorrect = qobj.opts.map((t,i)=>i).filter(i=>i!==qobj.a);
-  const hide = shuffleArray(incorrect).slice(0,2);
-  // hide buttons whose text matches those options
-  document.querySelectorAll('.opt').forEach(el=>{
-    if(hide.includes(qobj.opts.indexOf(el.textContent))) el.style.visibility='hidden';
-  });
-}
-
-function useHint(){
-  const id='btnHint'; if(helpUsed[id]) return alert('Hint already used'); if(coins < helpCosts[id]) return alert('Coins kam hain');
-  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
-  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
-  const qobj = quizBank[current]; if(!qobj) return;
-  alert(`Hint: Jawab ka pehla harf: "${qobj.opts[qobj.a].charAt(0)}"`);
-}
-
-function useAsk(){
-  const id='btnAsk'; if(helpUsed[id]) return alert('Ask already used'); if(coins < helpCosts[id]) return alert('Coins kam hain');
-  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
-  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
-  const qobj = quizBank[current]; if(!qobj) return;
-  // highlight correct
-  document.querySelectorAll('.opt').forEach(el=>{
-    if(el.textContent === qobj.opts[qobj.a]) el.style.border = '3px solid yellow';
-  });
-}
-
-function useSkip(){
-  const id='btnSkip'; if(helpUsed[id]) return alert('Skip already used'); if(coins < helpCosts[id]) return alert('Coins kam hain');
-  coins -= helpCosts[id]; localStorage.setItem('coins', coins); updateCoinsUI();
-  helpUsed[id]=true; document.getElementById(id).disabled=true; document.getElementById(id).classList.add('disabled');
-  // skip to next question
-  clearInterval(timer); current++; if(current < quizBank.length) loadQuestion(); else endQuiz();
-}
-
-/* Double Points / Extra Life activation */
-function activateDouble(){
-  if(doubleActive) return alert('Double already active for next correct');
-  if(coins < 20) return alert('20 coins chahiye double ke liye');
-  coins -= 20; localStorage.setItem('coins', coins); updateCoinsUI();
-  doubleActive = true;
-  alert('Double Points activated for next correct answer!');
-}
-function activateLife(){
-  if(extraLifeActive && !extraLifeConsumed) return alert('Extra life already active');
-  if(coins < 30) return alert('30 coins chahiye extra life ke liye');
-  coins -= 30; localStorage.setItem('coins', coins); updateCoinsUI();
-  extraLifeActive = true; extraLifeConsumed = false;
-  alert('Extra Life purchased — ek galti bach jayegi!');
-}
-
-/* ===================== Category / API fetch ===================== */
-async function loadCategory(category){
-  // require at least 50 coins
-  if(coins < 50){ alert('Category load karne ke liye 50 coins chahiye'); return; }
-  // Deduct 50 immediately; if API fails, refund
-  coins -= 50; localStorage.setItem('coins', coins); updateCoinsUI();
-  catStatus.textContent = '⏳ Aap ka sawaal load ho raha hai...';
-  preview.textContent = '';
-  try{
-    // Request body (simple prompt)
-    const prompt = `Create 4 short multiple-choice Islamic questions (question and 4 options) about "${category}". Format each as: Q) question ? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | Correct: <A/B/C/D>. Return them separated by new lines.`;
-    const body = {
-      "content": [
-        {
-          "type": "text",
-          "text": prompt
+        function generateContent() {
+            for (let i = 1; i <= 114; i++) {
+                const menuBox = document.createElement('div');
+                menuBox.className = `menu-box menu-box-${(i % 8) + 1}`;
+                menuBox.onclick = () => showPage(`surah${i}Page`);
+                menuBox.innerHTML = `<div class="menu-title">سورۃ ${surahNames[i-1]}</div>`;
+                mainMenuContainer.appendChild(menuBox);
+                const surahPage = document.createElement('div');
+                surahPage.id = `surah${i}Page`;
+                surahPage.className = 'surah-page';
+                const audioSurahNumber = String(i).padStart(3, '0');
+                surahPage.innerHTML = `
+                    <button class="back-button" onclick="showHomeScreen()">⇦ ہوم</button>
+                    <header class="header">
+                        ${i !== 1 && i !== 9 ? '<h1>بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</h1>' : ''}
+                        <h1>سورۃ ${surahNames[i-1]}</h1>
+                    </header>
+                    <div class="audio-player-wrapper">
+                        <div class="custom-audio-player" data-audio-src="https://download.quranicaudio.com/quran/abdul_basit_murattal/${audioSurahNumber}.mp3">
+                            <p style="text-align:center; padding: 10px 0;">آڈیو پلیئر لوڈ ہو رہا ہے...</p>
+                        </div>
+                    </div>
+                    <main class="surah-container">
+                        <p style="font-size: 1.5rem; text-align: center;">لوڈ ہو رہا ہے...</p>
+                    </main>`;
+                surahPagesContainer.appendChild(surahPage);
+            }
         }
-      ],
-      "temperature": 0.2
-    };
-    // The Google Gen AI endpoint may expect a slightly different format; we'll try common variants:
-    const resp = await fetch(API_MODEL_URL, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        contents: [{ parts:[{ text: prompt }] }]
-      })
+
+        window.showPage = (pageId) => {
+            homeScreen.style.display = 'none';
+            document.querySelectorAll('.surah-page').forEach(page => page.style.display = 'none');
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.style.display = 'block';
+                const surahNumber = pageId.replace('surah', '').replace('Page', '');
+                if (!targetPage.dataset.loaded) {
+                    loadSurahData(surahNumber, targetPage);
+                    targetPage.dataset.loaded = 'true';
+                }
+                const audioPlayerElement = targetPage.querySelector('.custom-audio-player');
+                if (audioPlayerElement && !audioPlayerElement.dataset.initialized) {
+                    initializeSingleAudioPlayer(audioPlayerElement);
+                }
+            }
+        };
+
+        window.showHomeScreen = () => {
+            document.querySelectorAll('.surah-page').forEach(page => {
+                page.style.display = 'none';
+                const audio = page.querySelector('audio');
+                if (audio && !audio.paused) {
+                    audio.pause();
+                }
+            });
+            homeScreen.style.display = 'flex';
+        };
+
+        async function loadSurahData(surahNumber, pageElement) {
+            const container = pageElement.querySelector('.surah-container');
+            const cacheKey = `surah_${surahNumber}`;
+            try {
+                const cachedData = localStorage.getItem(cacheKey);
+                if (cachedData) {
+                    renderSurah(JSON.parse(cachedData), container);
+                    return;
+                }
+                const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}`);
+                if (!response.ok) throw new Error('Network response was not ok.');
+                const data = await response.json();
+                const ayahs = data.data.ayahs;
+                localStorage.setItem(cacheKey, JSON.stringify(ayahs));
+                renderSurah(ayahs, container);
+            } catch (error) {
+                console.error('Failed to fetch surah data:', error);
+                container.innerHTML = `<p style="text-align: center; color: #e74c3c;">سورہ لوڈ کرنے میں ناکامی ہوئی۔ براہ کرم دوبارہ کوشش کریں.</p>`;
+            }
+        }
+
+        function renderSurah(ayahs, container) {
+            let surahHTML = '';
+            ayahs.forEach(ayah => {
+                surahHTML += `
+                    <div class="ayah-box">
+                        <p class="ayah-text">
+                            ${ayah.text}
+                            <span class="ayah-number">﴿${ayah.numberInSurah}﴾</span>
+                        </p>
+                    </div>`;
+            });
+            container.innerHTML = surahHTML;
+            setupIntersectionObserver();
+        }
+        
+        function setupIntersectionObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.ayah-box:not(.visible)').forEach(box => {
+                observer.observe(box);
+            });
+        }
+
+        function initializeSingleAudioPlayer(player) {
+            const audioSrc = player.dataset.audioSrc;
+            if (!audioSrc) return;
+            player.dataset.initialized = 'true';
+            player.innerHTML = `
+                <button class="play-pause-btn">
+                    <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                    <svg class="pause-icon" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                </button>
+                <div class="progress-container"><div class="progress-bar"></div></div>
+                <div class="time-display">00:00 / 00:00</div>`;
+
+            const audio = new Audio(audioSrc);
+            audio.preload = 'metadata';
+            const playPauseBtn = player.querySelector('.play-pause-btn');
+            const playIcon = player.querySelector('.play-icon');
+            const pauseIcon = player.querySelector('.pause-icon');
+            const progressContainer = player.querySelector('.progress-container');
+            const progressBar = player.querySelector('.progress-bar');
+            const timeDisplay = player.querySelector('.time-display');
+
+            playPauseBtn.addEventListener('click', () => {
+                if (audio.paused) audio.play(); else audio.pause();
+            });
+            audio.addEventListener('play', () => { playIcon.style.display = 'none'; pauseIcon.style.display = 'block'; });
+            audio.addEventListener('pause', () => { playIcon.style.display = 'block'; pauseIcon.style.display = 'none'; });
+            
+            const formatTime = (s) => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+            audio.addEventListener('loadedmetadata', () => { timeDisplay.textContent = `00:00 / ${formatTime(audio.duration)}`; });
+            audio.addEventListener('timeupdate', () => {
+                if (audio.duration) {
+                    progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+                    timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+                }
+            });
+            progressContainer.addEventListener('click', (e) => {
+                if (audio.duration) audio.currentTime = (e.offsetX / progressContainer.clientWidth) * audio.duration;
+            });
+            player.closest('.surah-page').appendChild(audio);
+            audio.style.display = 'none';
+        }
+
+        settingsIcon.onclick = () => { privacyModal.style.display = 'flex'; };
+        closeButton.onclick = () => { privacyModal.style.display = 'none'; };
+        aiChatButton.onclick = () => { aiChatModal.style.display = 'flex'; };
+        closeChatButton.onclick = () => { aiChatModal.style.display = 'none'; };
+        window.onclick = (event) => {
+            if (event.target == privacyModal) privacyModal.style.display = 'none';
+            if (event.target == aiChatModal) aiChatModal.style.display = 'none';
+        };
+        
+        generateContent();
     });
-    const data = await resp.json();
-    // Try to extract generated text robustly
-    let text = "";
-    try{
-      if(data.candidates && data.candidates.length){
-        // older response shape
-        text = data.candidates[0].content?.parts?.[0]?.text || data.candidates[0].output?.[0]?.content?.parts?.[0]?.text || "";
-      } else if(data.output && data.output[0] && data.output[0].content){
-        // alternative shape
-        const parts = data.output[0].content;
-        // join text parts
-        text = parts.map(p=>p.text||p.parts?.map(pp=>pp.text).join("")||"").join("\n");
-      } else {
-        text = JSON.stringify(data).slice(0,1000);
-      }
-    }catch(e){
-      text = "";
-    }
-
-    if(!text || text.length<10) throw new Error('Invalid API response');
-
-    // parse text: find up to 4 Q lines
-    const lines = text.split(/\n+/).map(s=>s.trim()).filter(Boolean);
-    const questions = [];
-    for(const line of lines){
-      // try to parse pattern: Q) ... | A) opt | B) opt | C) opt | D) opt | Correct: X
-      const parts = line.split('|').map(p=>p.trim());
-      if(parts.length >= 5){
-        const qpart = parts[0].replace(/^Q[:\)]\s*/i,'').trim();
-        const opts = parts.slice(1,5).map(x=>x.replace(/^[A-D][:)\.]\s*/i,'').trim());
-        let corr = parts.find(p=>/Correct[:\s]/i.test(p));
-        let idx = 0;
-        if(corr){
-          const m = corr.match(/[A-D]/i);
-          if(m){ idx = {A:0,B:1,C:2,D:3}[m[0].toUpperCase()]; }
-        } else {
-          // fallback: try find "Correct: X" at end
-          idx = 0;
-        }
-        questions.push({q:qpart, opts:opts, a:idx});
-      } else {
-        // fallback simple: split by '?' then create options heuristically — skip
-      }
-      if(questions.length >= 4) break;
-    }
-
-    if(questions.length < 1) throw new Error('Parsing failed');
-
-    // set quizBank = questions (ensure shape)
-    quizBank = questions.map(x=>({q:x.q, opts:x.opts, a:x.a}));
-    preview.textContent = 'Loaded ' + quizBank.length + ' questions from ' + category;
-    catStatus.textContent = '✅ Sawal load ho gaye.';
-    // start the quiz with these questions
-    startQuiz();
-  }catch(err){
-    console.error(err);
-    catStatus.textContent = '⚠️ API error: ' + (err.message || 'failed');
-    alert('API load failed: ' + (err.message || 'server error') + '. Coins refunded.');
-    // refund
-    coins += 50; localStorage.setItem('coins', coins); updateCoinsUI();
-  }
-}
-
-/* On load: ensure coins present */
-if(!localStorage.getItem('coins')){ coins = coins || 0; localStorage.setItem('coins', coins); }
-updateCoinsUI();
-
 </script>
+
+<!-- NAYA SCRIPT: Service Worker ko register karne ke liye -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker kamyabi se register ho gaya:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Service Worker register karne mein nakami:', error);
+                });
+        });
+    }
+</script>
+
 </body>
 </html>
